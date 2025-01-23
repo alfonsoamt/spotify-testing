@@ -8,6 +8,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from dotenv import load_dotenv
 # Import OS library
 import os
+# Import pickle library to help the cookies saving
+import pickle
 
 # Load env variables
 load_dotenv()
@@ -42,12 +44,12 @@ passwordInput = wait.until(EC.visibility_of_element_located((By.ID, "login-passw
 print(passwordInput.get_attribute("placeholder"))
 
 # Screenshot before input the data
-driver.save_screenshot('./screenshots/login_page.png')
+driver.save_screenshot('../../screenshots/beginner/login_page.png')
 # Send logig data
 usernameInput.send_keys(username)
 passwordInput.send_keys(password)
 # Screenshot after input the data
-driver.save_screenshot('./screenshots/data_input.png')
+driver.save_screenshot('../../screenshots/beginner/data_input.png')
 # Click login button
 loginButton = driver.find_element(By.ID, "login-button")
 loginButton.click()
@@ -56,11 +58,16 @@ loginButton.click()
 try:
     profileIcon = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[data-testid='user-widget-link']")))
     print("Login successful!")
+
+    # Save the login coockies in a binary file
+    with open('../../cookies/cookies.pkl', 'wb') as file:
+        pickle.dump(driver.get_cookies(), file)
+    print("cookies saved!")
 except:
     print("Login failed")
 
 # Screenshot after login
-driver.save_screenshot('./screenshots/after_login.png')
+driver.save_screenshot('../../screenshots/beginner/after_login.png')
 
 # Close browser
 driver.quit()
