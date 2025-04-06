@@ -169,3 +169,11 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+
+# Folders to ignore
+cookies/*.pkl
+screenshots/*.png
+files/*
+.cursorignore
+.cursorindexingignore

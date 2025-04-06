@@ -40,6 +40,8 @@ print("The chosen artist to tesstare: ", chosen_artists)
 
 body = driver.find_element(By.TAG_NAME, "body")
 artists_data = []
+all_artists_data = [] # Lista para guardar los datos de cada artista
+
 # For each artists open a new tab and go down to click the artists infor and get the world position and, followers and top 5 cities.
 for artist in chosen_artists:
     print("The artist to test is: ", artist)
@@ -65,18 +67,93 @@ for artist in chosen_artists:
     if artist_info_button:
         artist_info_button.click()
         try:
-            dialog = driver.find_element(By.XPATH, f".//dialog[@aria-label='{artist}']")
-            data_container = dialog.find_element(By.XPATH, "//div[count(./div) = 9]")
-            world_number = data_container.find_element(By.XPATH,"//div[count(following-sibling::div) = 8 ]/div[starts-with(.,'#')]").text.strip("#")
-            followers = data_container.find_element(By.XPATH, "./div/div[not(translate(., '0123456789.', ''))]")[0].text.strip(".")
-            mensual = data_container.find_element(By.XPATH, "./div/div[not(translate(., '0123456789.', ''))]")[1].text.strip(".")
-            Cities = data_container.find_element(By.XPATH, "./div[child::div[1][translate(., '0123456789.#', '')]]")
-            print("The artist: ", artist, "has: ", followers, "followers and is the number: ", world_number, "in the world")
-            print("The artist: ", artist, "has: ", mensual, "monthly listeners")
-            print("The artist: ", artist, "has: ", Cities, "followers in the cities")
+            # 1. Esperar a que el diálogo esté presente
+            dialog = wait.until(EC.presence_of_element_located((By.XPATH, f".//dialog[@aria-label='{artist}']")))
+            print(f"Diálogo encontrado para {artist}.") # Añadido para depuración
+
+            # 2. Ahora, esperar a que data_container esté presente DENTRO del contexto del diálogo ya visible
+            #    Usamos un XPath que empieza desde el diálogo para ser más específicos.
+            data_container_xpath = f".//dialog[@aria-label='{artist}']//div[count(./div) >= 7]"
+            data_container = wait.until(EC.presence_of_element_located((By.XPATH, data_container_xpath)))
+            print(f"Data container encontrado para {artist}.") # Añadido para depuración
+            try:
+                # Ejemplo: Esperar por el texto del primer div que NO contiene solo números (asumiendo que es la ETIQUETA 'Seguidores')
+                # O MEJOR AÚN: Esperar por el elemento que CONTIENE el número de seguidores.
+                # Ajusta este XPath según tu estructura HTML real:
+                xpath_elemento_con_texto_clave = ".//div[not(translate(., '0123456789.', ''))]" # Ejemplo: el valor de seguidores
+                wait.until(lambda d: data_container.find_elements(By.XPATH, xpath_elemento_con_texto_clave)[0].text != "")
+                print("Texto del elemento clave detectado (ya no está vacío).")
+            except Exception as e:
+                # Si después de 10 segundos el texto sigue vacío o el elemento no se encuentra,
+                # podría indicar que el artista realmente no tiene esos datos.
+                print(f"Advertencia: El texto del elemento clave no apareció o no se encontró: {e}")
+                # El script continuará, pero los campos podrían seguir vacíos o N/A.
+
+            # Intentar encontrar el elemento world_number usando find_elements
+            world_number_xpath = ".//div[count(following-sibling::div) >= 7 ]/div[starts-with(.,'#')]"
+            world_number_elements = data_container.find_elements(By.XPATH, world_number_xpath)
+
+            # Verificar si la lista NO está vacía (es decir, se encontró el elemento)
+            if world_number_elements:
+                world_number = world_number_elements[0].text.strip("#")
+                print(f"Número mundial encontrado: {world_number}")
+            else:
+                # Si la lista está vacía, el elemento no existe
+                world_number = "N/A"
+                print("Número mundial no encontrado (N/A).")
+
+            followers = data_container.find_elements(By.XPATH, ".//div[not(translate(., '0123456789.', ''))]")[0]
+            print("Followers found for artist: ", followers.text.replace(".", ""))
+            mensual = data_container.find_elements(By.XPATH, ".//div[not(translate(., '0123456789.', ''))]")[1]
+            print("Mensual found for artist: ", mensual.text.replace(".", ""))
+            cities_elements = []
+            try:
+                # Buscar los 5 divs hermanos siguientes al elemento 'mensual'
+                cities_xpath = "../following-sibling::div[position() <= 5]"
+                cities_elements = mensual.find_elements(By.XPATH, cities_xpath) # Buscar relativo a mensual_element
+
+                # Ahora iterar para obtener el texto de cada ciudad
+                cities_text = [city.text for city in cities_elements]
+
+                # Opcional: Verificar si se encontraron 5 ciudades
+                if len(cities_text) == 5:
+                    print(f"Ciudades encontradas: {','.join(cities_text)}")
+                else:
+                    print(f"Se encontraron {len(cities_text)} ciudades (se esperaban 5): {', '.join(cities_text)}")
+
+            except Exception as e:
+                print(f"Error al buscar/procesar ciudades después de {mensual}: {e}")
+                cities_text = [] # Dejar la lista vacía si hay error
+                
+            # Crear un diccionario para el artista actual
+            current_artist_info = {
+                "Artist": artist,
+                "Ranking": world_number, # Ya será "N/A" si no se encontró
+                "Followers": followers.text.replace(".", ""), # Asegúrate que estas variables tengan los valores correctos
+                "MonthlyListeners": mensual.text.replace(".", "")   ,
+                "TopCities": cities_text # La lista de ciudades
+            }
+            # Añadir el diccionario a la lista general
+            all_artists_data.append(current_artist_info)
+
+            print(f"Datos recopilados para {artist}")
             print("*"*100)
-        except:
-            print("Dialog not found")
+        except Exception as e:
+            print(f"Error esperando el diálogo o data_container para {artist}: {e}")
+
+# Guardar todos los datos recopilados en JSON
+output_dir = os.path.join(BASE_DIR, 'files')
+os.makedirs(output_dir, exist_ok=True) # Asegura que el directorio exista
+
+json_path = os.path.join(output_dir, "artist_data.json")
+with open(json_path, "w", encoding="utf-8") as file:
+    json.dump(all_artists_data, file, indent=4, ensure_ascii=False)
+
+print(f"Datos de artistas guardados en {json_path}")
+
+# Cerrar todas las ventanas y terminar el driver
+driver.quit()
+print("Navegador cerrado. Script finalizado.")
 
 
 
