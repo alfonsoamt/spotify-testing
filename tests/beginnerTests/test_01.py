@@ -39,11 +39,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 # initialize the path to save the screenshots
 SCREENSHOTS_PATH = os.path.join(BASE_DIR, "screenshots", "beginner")
 
+# Create the screenshots directory if it doesn't exist
+os.makedirs(SCREENSHOTS_PATH, exist_ok=True)
+
 # Initialize the driver for Chrome
 driver = None
 try:
     driver = webdriver.Chrome()
     driver.get("https://open.spotify.com/")
+    driver.maximize_window()
 
     # Create a wait object for the driver
     wait = WebDriverWait(driver, 10)   
@@ -130,6 +134,7 @@ try:
     # Load the cookies
     driver = webdriver.Chrome()
     driver.get("https://open.spotify.com/")
+    driver.maximize_window()
     wait = WebDriverWait(driver, 10)
     try:
         with open(os.path.join(BASE_DIR, "cookies", "cookies.pkl"), "rb") as file:

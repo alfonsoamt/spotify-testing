@@ -1,3 +1,13 @@
+"""This test is to explore the web page and extract the data from web
+* Complex XPath
+* 
+* Simulate a scroll down to load new data in the DOM
+
+This test focuses on:
+* Make a search
+* Get the data from the search
+* Save the data on CSV and JSON
+"""
 # This test is to search for a playlist and extract the data from web
 from selenium import webdriver
 # This line is necesary for search the HTML elements
