@@ -95,10 +95,7 @@ try:
         login_button.click()
     except TimeoutException as e_login_button:
         print(f"ERROR: Login button not found: {e_login_button}")
-        if driver:
-            print("INFO: Closing the browser...")
-            driver.quit()
-            exit()
+        raise e_login_button
     else:
         print("INFO: Credentials sent and login button clicked successfully!")
         
@@ -117,10 +114,7 @@ try:
             pickle.dump(driver.get_cookies(), file)
     except TimeoutException as e_profile_icon:
         print(f"ERROR: Profile icon not found: {e_profile_icon}")
-        if driver:
-            print("INFO: Closing the browser...")
-            driver.quit()
-            exit()
+        raise e_profile_icon
     else:
         print(f"INFO: Profile icon found, login successful, cookies saved!")
 
@@ -151,10 +145,7 @@ try:
         print("INFO: Profile icon found, login successful!")
     except (FileNotFoundError, pickle.UnpicklingError) as e_load_cookies:
         print(f"ERROR: Cookies not loaded session not restored: {e_load_cookies}")
-        if driver:
-            print("INFO: Closing the browser...")
-            driver.quit()
-            exit()
+        raise e_load_cookies
     else:
         print("INFO: Cookies loaded and session restored successfully!")
         
@@ -170,6 +161,7 @@ except Exception as e_unhandled:
             driver.save_screenshot(os.path.join(SCREENSHOTS_PATH, "unhandled_error_01.png"))
         except Exception as e_screenshot:
             print(f"WARNING: Unhandled exception: {e_screenshot}")
+    raise e_unhandled
 
 # Finally block for cleanup
 finally:

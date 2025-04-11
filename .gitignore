@@ -173,7 +173,9 @@ cython_debug/
 
 # Folders to ignore
 cookies/*.pkl
-screenshots/*.png
+screenshots/beginner/*.png
+screenshots/intermediate/*.png
+screenshots/advanced/*.png
 files/*
 .cursorignore
 .cursorindexingignore
