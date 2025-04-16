@@ -179,3 +179,5 @@ screenshots/advanced/*.png
 files/*
 .cursorignore
 .cursorindexingignore
+.vscode
+vscode/*

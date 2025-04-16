@@ -1,17 +1,29 @@
-"""This is a test learn more about the selenium library:
-* Working with the web driver
-* Basic navigation with driver.get()
-* Closing the browser with driver.quit()
-* basic strategies for locating elements
-* basic actions with elements
-* basic waits
+"""
+This script performs a login on Spotify, saves the session cookies, and then restores the session using the saved cookies.
 
-This test focuses on:
-* Make a login test
-* Verify the login was successful
-* Save the cookies
-* Load the cookies
-* Verify the login was successful again
+Selenium Concepts Covered:
+*   Initializing and managing the WebDriver (`webdriver.Chrome`).
+*   Basic navigation (`driver.get()`).
+*   Closing the browser (`driver.quit()`).
+*   Locating elements using different strategies (ID, CSS Selector).
+*   Performing basic actions on elements (`.click()`, `.send_keys()`).
+*   Using explicit waits (`WebDriverWait`, `expected_conditions as EC`).
+*   Handling common Selenium exceptions (`TimeoutException`).
+*   Managing browser cookies (`driver.get_cookies()`, `driver.add_cookie()`).
+*   Saving and loading cookies using the `pickle` library.
+
+Test Actions Performed:
+*   Navigates to the Spotify login page.
+*   Enters username and password credentials (loaded from environment variables).
+*   Clicks the login button.
+*   Verifies successful login by checking for the presence of the user profile icon.
+*   Saves the current browser cookies to a file.
+*   Closes the browser.
+*   Opens a new browser instance.
+*   Navigates back to Spotify.
+*   Loads the saved cookies into the new browser session.
+*   Refreshes the page.
+*   Verifies successful login again by checking for the user profile icon.
 """
 
 # First import all the necessary libraries from selenium
@@ -45,6 +57,7 @@ os.makedirs(SCREENSHOTS_PATH, exist_ok=True)
 # Initialize the driver for Chrome
 driver = None
 try:
+    print("INFO: Initializing the WebDriver...")
     driver = webdriver.Chrome()
     driver.get("https://open.spotify.com/")
     driver.maximize_window()
@@ -94,7 +107,7 @@ try:
         # Click on the login button
         login_button.click()
     except TimeoutException as e_login_button:
-        print(f"ERROR: Login button not found: {e_login_button}")
+        print(f"ERROR: Element not found: {e_login_button}")
         raise e_login_button
     else:
         print("INFO: Credentials sent and login button clicked successfully!")
@@ -125,7 +138,9 @@ try:
     # To test the cookies, we need to load the cookies.Before, the browser need to be closed
     driver.quit()
 
+
     # Load the cookies
+    print("INFO: Closing and opening the WebDriver to load the sesion...")
     driver = webdriver.Chrome()
     driver.get("https://open.spotify.com/")
     driver.maximize_window()

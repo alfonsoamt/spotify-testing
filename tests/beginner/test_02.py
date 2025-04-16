@@ -1,13 +1,26 @@
-"""This test is to explore the web page and extract the data from web:
-* Working with complex XPath locators
-* Interaction with the DOM
-* Simulate a scroll down
+"""
+This script searches for a specific Spotify playlist, scrolls down to load all its tracks, extracts track details, and saves the data into CSV and JSON files.
 
-This test focuses on:
-* Make a search
-* Scroll down to load new data in the DOM
-* Get the data from the page
-* Save the data on CSV and JSON
+Selenium Concepts Covered:
+*   Initializing and managing the WebDriver (`webdriver.Chrome`).
+*   Navigation (`driver.get()`) and element location (CSS Selector, complex XPath).
+*   Element interaction (`.click()`, `.send_keys()`).
+*   Using explicit waits (`WebDriverWait`, `expected_conditions as EC`).
+*   Handling `TimeoutException`.
+*   Interacting with the DOM to extract data.
+*   Simulating page scrolling using `Keys.PAGE_DOWN`.
+*   Handling dynamically loaded content within a list/grid.
+*   Extracting text and attributes from elements.
+
+Test Actions Performed:
+*   Navigates to the Spotify homepage.
+*   Uses the search bar to find a specific playlist (`Top 50: México`).
+*   Filters search results by clicking the 'Playlists' button.
+*   Clicks on the target playlist from the search results.
+*   Scrolls down the playlist page repeatedly until all tracks are loaded into the DOM.
+*   Extracts the following details for each track: position, name, artist(s), reproductions count, album name, and duration.
+*   Stores the extracted data.
+*   Saves the collected track data into both a CSV file and a JSON file.
 """
 
 # First import all the necessary libraries from selenium
@@ -23,8 +36,6 @@ import os
 # Import the csv and json libraries to save the data on CSV and JSON
 import csv
 import json
-# Import the time library to wait for the page to load
-import time
 
 # Initialize the project path to save files
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -46,6 +57,7 @@ PLAYLIST_NAME = "Top 50: México"
 # Initialize the driver for Chrome
 driver = None
 try:
+    print("INFO: Initializing the WebDriver...")
     driver = webdriver.Chrome()
     driver.get("https://open.spotify.com/")
     driver.maximize_window()
