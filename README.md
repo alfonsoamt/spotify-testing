@@ -87,26 +87,3 @@ This phase will focus on professional testing practices, design patterns, advanc
 *   **Integrate Early and Often:** Set up CI/CD integration early to automate test runs on code changes.
 *   **Focus on Value:** Prioritize tests that cover the most critical functionalities and user flows.
 *   **Explore Beyond Selenium:** Consider complementing UI tests with API testing for faster and more stable checks where appropriate.
-
-## Project Structure
-
-The repository is organized as follows:
-
-spotify-testing/
-├── tests/ # Test scripts organized by complexity level
-│ ├── beginner/ # Phase 1 test scripts
-│ │ ├── test_01.py # Basic navigation and interactions
-│ │ ├── test_02.py # Intermediate interactions
-│ │ └── test_03.py # Advanced interactions for Phase 1
-│ ├── intermediate/ # Phase 2 test scripts (planned)
-│ └── advanced/ # Phase 3 test scripts (planned)
-├── screenshots/ # Screenshots captured during test execution
-│ ├── beginner/ # Screenshots from Phase 1 tests
-│ ├── intermediate/ # Screenshots from Phase 2 tests
-│ └── advanced/ # Screenshots from Phase 3 tests
-├── cookies/ # Saved cookie files for session persistence
-├── Drivers/ # WebDriver executables for different browsers
-├── files/ # Data files generated or used by tests
-├── venv/ # Python virtual environment
-├── requirements.txt # Python dependencies
-└── README.md # Project documentation
