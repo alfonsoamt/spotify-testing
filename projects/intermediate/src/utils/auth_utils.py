@@ -25,7 +25,7 @@ LOGIN_BUTTON = (By.ID, "login-button")
 LOGGED_IN_INDICATOR = (By.CSS_SELECTOR, "button[data-testid='user-widget-link']")
 LOGOUT_BUTTON = (By.CSS_SELECTOR, "button[data-testid='user-widget-dropdown-logout']")
 BASE_URL = "https://www.spotify.com/"
-
+# Define functtion to log in to Spotify using username and password
 def login_with_credentials(driver: WebDriver, username: str, password: str) -> bool:
     """
     Log in to Sptofy using the provided username and password.
@@ -77,7 +77,7 @@ def login_with_credentials(driver: WebDriver, username: str, password: str) -> b
         logger.error(f"Unexpected error during login: {e_unexpected}", exc_info = True)
         return False
 
-
+# Define function to check if the user is logged in to Spotify
 def is_logged_in(driver: WebDriver, timeout: int = DEFAULT_TIMEOUT) -> bool:
     """
     Check if the user is logged in to Spotify.
@@ -103,7 +103,8 @@ def is_logged_in(driver: WebDriver, timeout: int = DEFAULT_TIMEOUT) -> bool:
     except Exception as e_unexpected:
         logger.error(f"Unexpected error while checking login status: {e_unexpected}", exc_info = True)
         return False
-    
+
+# Define function to save cookies to a file    
 def save_cookies(driver: WebDriver, filename_path: str) -> None:
     """
     Save the cookies of the current session to a file.
@@ -129,6 +130,7 @@ def save_cookies(driver: WebDriver, filename_path: str) -> None:
     except Exception as e_unexpected:
         logger.error(f"Unexpected error while saving cookies: {e_unexpected}", exc_info = True)
 
+# Define function to load cookies from a file
 def load_cookies(driver: WebDriver, filename_path: str) -> bool:
     """
     Load cookies from a file and add them to the current session.
@@ -170,6 +172,7 @@ def load_cookies(driver: WebDriver, filename_path: str) -> bool:
     except Exception as e_unexpected:
         logger.error(f"Unexpected error while loading cookies: {e_unexpected}", exc_info = True)
 
+# Define function to log out from Spotify
 def logout(driver: WebDriver) -> bool:
     """
     Log out from Spotify.
